@@ -1,0 +1,172 @@
+{
+  "flowTemplates": [
+    {
+      "id": "welcome-flow",
+      "name": "Welcome Message Flow",
+      "description": "A simple flow that sends a welcome message and collects user preferences",
+      "nodes": [
+        {
+          "id": "start-node",
+          "type": "trigger",
+          "position": { "x": 100, "y": 100 },
+          "data": {
+            "triggerType": "newMessage",
+            "conditions": []
+          }
+        },
+        {
+          "id": "welcome-node",
+          "type": "message",
+          "position": { "x": 300, "y": 100 },
+          "data": {
+            "messageType": "template",
+            "templateName": "welcome_message",
+            "variables": ["{{contact.name}}"]
+          }
+        },
+        {
+          "id": "menu-node",
+          "type": "message",
+          "position": { "x": 500, "y": 100 },
+          "data": {
+            "messageType": "text",
+            "content": "What would you like to know about our services?\n1. Product Information\n2. Pricing Plans\n3. Contact Support\n\nPlease reply with the number of your choice."
+          }
+        },
+        {
+          "id": "product-node",
+          "type": "message",
+          "position": { "x": 700, "y": 50 },
+          "data": {
+            "messageType": "text",
+            "content": "Our platform offers:\n- Campaign Management\n- Chatbot Builder\n- Analytics Dashboard\n- Contact Management\n\nWould you like to schedule a demo? (Yes/No)"
+          }
+        },
+        {
+          "id": "pricing-node",
+          "type": "message",
+          "position": { "x": 700, "y": 150 },
+          "data": {
+            "messageType": "text",
+            "content": "We offer three pricing plans:\n1. Starter - ₹999/month\n2. Growth - ₹2,999/month\n3. Pro - ₹5,999/month\n\nWhich plan interests you?"
+          }
+        },
+        {
+          "id": "support-node",
+          "type": "assign",
+          "position": { "x": 700, "y": 250 },
+          "data": {
+            "actionType": "assignToAgent",
+            "agentGroup": "support"
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "e1-2",
+          "source": "start-node",
+          "target": "welcome-node",
+          "type": "default"
+        },
+        {
+          "id": "e2-3",
+          "source": "welcome-node",
+          "target": "menu-node",
+          "type": "default"
+        },
+        {
+          "id": "e3-4",
+          "source": "menu-node",
+          "target": "product-node",
+          "type": "default",
+          "data": {
+            "condition": "message contains '1' or 'product' or 'information'"
+          }
+        },
+        {
+          "id": "e3-5",
+          "source": "menu-node",
+          "target": "pricing-node",
+          "type": "default",
+          "data": {
+            "condition": "message contains '2' or 'price' or 'pricing'"
+          }
+        },
+        {
+          "id": "e3-6",
+          "source": "menu-node",
+          "target": "support-node",
+          "type": "default",
+          "data": {
+            "condition": "message contains '3' or 'support' or 'contact'"
+          }
+        }
+      ]
+    },
+    {
+      "id": "abandoned-cart-flow",
+      "name": "Abandoned Cart Flow",
+      "description": "A flow that reminds customers about items left in their cart",
+      "nodes": [
+        {
+          "id": "trigger-node",
+          "type": "trigger",
+          "position": { "x": 100, "y": 100 },
+          "data": {
+            "triggerType": "customEvent",
+            "eventName": "cart_abandoned",
+            "delay": "1 hour"
+          }
+        },
+        {
+          "id": "reminder-node",
+          "type": "message",
+          "position": { "x": 300, "y": 100 },
+          "data": {
+            "messageType": "template",
+            "templateName": "abandoned_cart",
+            "variables": ["{{contact.name}}", "{{cart.items}}", "{{cart.total}}"]
+          }
+        },
+        {
+          "id": "followup-node",
+          "type": "delay",
+          "position": { "x": 500, "y": 100 },
+          "data": {
+            "duration": "1 day"
+          }
+        },
+        {
+          "id": "discount-node",
+          "type": "message",
+          "position": { "x": 700, "y": 100 },
+          "data": {
+            "messageType": "template",
+            "templateName": "abandoned_cart_discount",
+            "variables": ["{{contact.name}}", "10"]
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "e1-2",
+          "source": "trigger-node",
+          "target": "reminder-node",
+          "type": "default"
+        },
+        {
+          "id": "e2-3",
+          "source": "reminder-node",
+          "target": "followup-node",
+          "type": "default"
+        },
+        {
+          "id": "e3-4",
+          "source": "followup-node",
+          "target": "discount-node",
+          "type": "default"
+        }
+      ]
+    }
+  ]
+}
